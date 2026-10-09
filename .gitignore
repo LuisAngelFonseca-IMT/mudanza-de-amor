@@ -3,5 +3,6 @@ node_modules/
 *.log
 .env
 .env.local
+public/js/env.js
 firebase-debug.log
 .firebaserc

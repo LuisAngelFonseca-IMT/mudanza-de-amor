@@ -1,14 +1,9 @@
 // ============================================================
-// Firebase config
+// Firebase config — se carga desde env.js (no versionado)
 // ============================================================
-var firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "mudanza-de-amor.firebaseapp.com",
-  projectId: "mudanza-de-amor",
-  storageBucket: "mudanza-de-amor.firebasestorage.app",
-  messagingSenderId: "123456789",
-  appId: "TU_APP_ID"
-};
+if (typeof firebaseConfig === 'undefined') {
+  console.error('Falta public/js/env.js con la config de Firebase. Copia env.example.js y llena los valores.');
+}
 
 firebase.initializeApp(firebaseConfig);
 
