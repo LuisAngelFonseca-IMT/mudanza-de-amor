@@ -30,8 +30,8 @@ p{margin:0} .muted{color:var(--muted)} .small{font-size:.875rem} .num{font-varia
 header{display:flex;flex-direction:column;gap:4px;text-align:center;align-items:center}
 .count{display:inline-block;background:var(--lav);color:var(--lav-ink);border-radius:999px;padding:4px 14px;font-size:.85rem;font-weight:700}
 
-/* Las nueve pestañas siempre a la vista: una fila en pantalla ancha, cuadrícula de 3 x 3 en el cel. */
-.tabs{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;background:var(--soft);border-radius:999px;padding:4px}
+/* Las seis pestañas siempre a la vista */
+.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--soft);border-radius:999px;padding:4px}
 .tabs button{background:transparent;color:var(--muted);border:0;border-radius:999px;padding:8px 2px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;min-width:0}
 @media (min-width:700px){nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;margin-block:-8px}}
 @media (max-width:699px){.tabs{grid-template-columns:repeat(3,minmax(0,1fr));border-radius:22px}.tabs button{padding:9px 2px;font-size:.9rem}}
@@ -187,11 +187,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     <button role="tab" data-t="aportes">Ahorro</button>
     <button role="tab" data-t="cuartos">Cuartos</button>
     <button role="tab" data-t="estilo">Estilo</button>
-    <button role="tab" data-t="ofertas">Ofertas</button>
     <button role="tab" data-t="depas">Depas</button>
     <button role="tab" data-t="vida">Juntos</button>
-    <button role="tab" data-t="plan">Plan</button>
-    <button role="tab" data-t="mudanza">Mudanza</button>
   </div></nav>
 
   <p class="msg" id="msg" hidden></p>
@@ -211,10 +208,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     <div class="card">
       <div class="head"><h2>Aportación de este mes</h2><span class="small muted" id="mesNom"></span></div>
       <div class="two" id="mesAp"><p class="empty">Aquí sale si cada quien ya puso su parte del mes.</p></div>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Esta semana</h2><span class="small muted">Del calendario</span></div>
-      <ul class="tl" id="semana"><li class="empty" style="display:block">Nada agendado en los próximos días.</li></ul>
     </div>
     <div class="card">
       <div class="head"><h2>Pendientes</h2><span class="small muted">Lo que le toca a cada quien</span></div>
@@ -239,18 +232,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       <p class="small muted">Línea sólida: sus saldos. Punteada: hacia dónde van con <span id="planTxt"></span>. La franja es agosto a octubre 2027.</p>
       <ul class="rows small" id="hist"></ul>
     </div>
-    <div class="card">
-      <div class="head"><h2>¿Y si…?</h2><span class="small muted">Prueben números sin cambiar nada</span></div>
-      <div id="ysRes" style="display:flex;flex-direction:column;gap:10px"><p class="empty">Muevan cuánto ahorran, metan un extra o cambien la meta, y vean cuándo llegarían.</p></div>
-      <form class="row" id="formYs">
-        <label>Ahorro al mes entre los dos<input type="number" id="ysMensual" min="0" step="500" inputmode="decimal"></label>
-        <label>Meta a juntar<input type="number" id="ysMeta" min="0" step="1000" inputmode="decimal"></label>
-        <label>Un extra de una sola vez<input type="number" id="ysExtra" min="0" step="500" inputmode="decimal" placeholder="Aguinaldo, bono"></label>
-        <label>En qué mes cae<select id="ysMes"></select></label>
-        <button type="button" class="mini" id="ysLista">Probar con la meta según su lista</button>
-        <button type="submit">Guardar este ahorro mensual</button>
-      </form>
-    </div>
     <div class="card" id="apRes"><p class="empty">Anoten cada depósito que hagan al ahorro para ver cuánto ha puesto cada quien.</p></div>
     <div class="card">
       <h2>Anotar una aportación</h2>
@@ -263,31 +244,13 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
         <button type="submit">Anotar</button>
       </form>
     </div>
-    <div class="card"><h2>Mes por mes</h2><div class="scroll" id="apMeses"><p class="empty">Aquí sale cada mes con lo que puso cada quien contra su meta mensual.</p></div></div>
     <div class="card"><h2>Movimientos</h2><ul class="rows small" id="apList"><li class="empty">Todavía no hay aportaciones anotadas.</li></ul></div>
-    <div class="card">
-      <div class="head"><h2>Fondo de emergencia</h2><span class="small muted">Aparte del dinero de la mudanza</span></div>
-      <div id="fondo" style="display:flex;flex-direction:column;gap:12px"><p class="empty">Un colchón para no llegar al depa en ceros. Anoten cuánto quieren juntar y cuánto llevan.</p></div>
-      <form class="row" id="formFondo">
-        <label>Llevan<input type="number" id="foSaldo" step="0.01" min="0" inputmode="decimal" placeholder="0"></label>
-        <label>Meta del fondo<input type="number" id="foMeta" step="1" min="0" inputmode="decimal"></label>
-        <button type="submit">Guardar</button>
-      </form>
-    </div>
-    <details>
-      <summary><div class="sumtop"><h2>En qué se va la meta</h2><span id="comprasRes"></span></div></summary>
-      <div id="compras" style="padding-block:8px 14px"><p class="empty">Aquí aparece el desglose: depósito, muebles, sala exterior y súper inicial.</p></div>
-    </details>
   </div>
 
   <div class="tab" id="t-cuartos" hidden>
     <div class="card">
-      <div class="head"><h2>Meta según su lista</h2><span class="small muted">Con precios aproximados que pueden corregir</span></div>
-      <div id="metaCalc" style="display:flex;flex-direction:column;gap:12px"><p class="empty">Aquí se calcula cuánto necesitan juntar según lo que todavía falta comprar.</p></div>
-      <form class="row" id="formMeta">
-        <label>Imprevistos (%)<input type="number" id="impPct" min="0" max="30" step="1" inputmode="numeric" placeholder="0"></label>
-        <button type="submit" id="btnMeta">Usar como meta</button>
-      </form>
+      <div class="head"><h2>Presupuesto</h2><span class="small muted">Esperado vs. lo que sale de su lista</span></div>
+      <div id="metaCalc" style="display:flex;flex-direction:column;gap:12px"><p class="empty">Agreguen productos con precio para ver cuánto van a necesitar.</p></div>
     </div>
     <div class="card" id="invRes"><p class="empty">Aquí aparece el resumen de quién aporta qué.</p></div>
     <div class="card" id="gastos"><p class="empty">Aquí se suma lo que cada quien ha pagado en compras.</p></div>
@@ -297,6 +260,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       <form class="row" id="formInv">
         <label>Qué<input type="text" id="inInv" maxlength="80" required placeholder="Espejo de cuerpo completo"></label>
         <label>Cuarto<select id="inCuarto"></select></label>
+        <label>Precio aprox.<input type="number" id="inPrecio" min="0" step="1" inputmode="decimal" placeholder="2500"></label>
+        <label style="flex-basis:100%">Link del producto (opcional)<input type="url" id="inUrl" placeholder="https://www.liverpool.com.mx/..."></label>
         <button type="submit">Agregar</button>
       </form>
     </div>
@@ -400,22 +365,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     </div>
   </div>
 
-  <div class="tab" id="t-ofertas" hidden>
-    <div class="card">
-      <div class="head"><h2>Lista de deseos</h2><span class="small muted">Les aviso cuando baje de su precio</span></div>
-      <div id="deseos"><p class="empty">Agreguen productos concretos con el precio al que los quieren. Cada semana se revisa su precio y se avisa si baja de ahí.</p></div>
-      <form class="row" id="formDes">
-        <label>Producto<input type="text" id="desNombre" maxlength="100" required placeholder="Colchón king Luuna Original"></label>
-        <label>Lo quiero en<input type="number" id="desPrecio" step="1" min="0" inputmode="decimal" required placeholder="14000"></label>
-        <label>Link (opcional)<input type="url" id="desUrl" placeholder="https://"></label>
-        <button type="submit">Agregar</button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Ofertas de la semana</h2><span class="small muted">Liverpool, Palacio de Hierro y similares</span></div>
-      <div id="ofertas"><p class="empty">Cada sábado llegan aquí las mejores ofertas de colchones, blancos, muebles y línea blanca.</p></div>
-    </div>
-  </div>
 
   <div class="tab" id="t-depas" hidden>
     <div class="card">
@@ -530,62 +479,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     </div>
   </div>
 
-  <div class="tab" id="t-plan" hidden>
-    <div class="card">
-      <div class="calhead"><button type="button" class="mini" id="calPrev" aria-label="Mes anterior">‹</button><h2 id="calMes"></h2><button type="button" class="mini" id="calNext" aria-label="Mes siguiente">›</button></div>
-      <div class="cal" id="cal"></div>
-      <div class="caldia" id="calDia" hidden></div>
-      <div class="chips"><span class="chip lav">Visita</span><span class="chip warn">Ofertas</span><span class="chip ok">Meta de ahorro</span><span class="chip plain">Otro</span></div>
-    </div>
-    <div class="card">
-      <h2>Agregar al calendario</h2>
-      <form class="row" id="formFe">
-        <label style="flex-basis:100%">Qué<input type="text" id="feTitulo" maxlength="100" required placeholder="Visita al depa de Carretas, 5 pm"></label>
-        <label>Tipo<select id="feTipo"><option value="visita">Visita</option><option value="oferta">Ofertas</option><option value="meta">Meta de ahorro</option><option value="otro">Otro</option></select></label>
-        <label>Empieza<input type="date" id="feFecha" required></label>
-        <label id="feFinL">Termina (opcional)<input type="date" id="feFin"></label>
-        <label id="fePctL" hidden>% ahorrado para esa fecha<input type="number" id="fePct" min="1" max="100" step="1" inputmode="numeric" placeholder="50"></label>
-        <button type="submit">Agregar</button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Lo que viene</h2><span class="small muted">Las fechas de ofertas son aproximadas</span></div>
-      <ul class="tl" id="fechas"><li class="empty" style="display:block">Aquí aparece el calendario rumbo a la mudanza.</li></ul>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Checklist</h2><span class="small muted" id="checkRes"></span></div>
-      <ul class="rows" id="check"><li class="empty">Aquí aparecen los pendientes de la mudanza.</li></ul>
-      <form class="row" id="formChk">
-        <label>Agregar pendiente<input type="text" id="chkTexto" maxlength="120" required placeholder="Pedir carta laboral"></label>
-        <button type="submit">Agregar</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="tab" id="t-mudanza" hidden>
-    <div class="card">
-      <div class="head"><h2>Papeles para rentar</h2><span class="small muted" id="papRes"></span></div>
-      <ul class="rows" id="papeles"><li class="empty">Aquí aparece lo que suelen pedir para rentar, con quién ya lo tiene listo.</li></ul>
-      <form class="row" id="formPap">
-        <label>Agregar documento<input type="text" id="papNombre" maxlength="100" required placeholder="Carta de recomendación del casero actual"></label>
-        <button type="submit">Agregar</button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Cotizaciones de flete</h2><span class="small muted" id="flRes"></span></div>
-      <ul class="rows" id="fletes"><li class="empty">Anoten cada cotización para compararlas. Pidan al menos tres.</li></ul>
-      <form class="row" id="formFl">
-        <label>Empresa<input type="text" id="flEmpresa" maxlength="80" required placeholder="Mudanzas del Bajío"></label>
-        <label>Precio<input type="number" id="flPrecio" min="0" step="1" inputmode="decimal" required placeholder="4500"></label>
-        <label style="flex-basis:100%">Qué incluye (opcional)<input type="text" id="flNota" maxlength="160" placeholder="Camión de 3.5 t, 2 cargadores, empaque de cocina"></label>
-        <button type="submit">Agregar</button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="head"><h2>Qué se lleva cada quien</h2><span class="small muted">Sale de lo que marcaron en Cuartos</span></div>
-      <div class="two" id="lleva"><p class="empty">Cuando marquen en Cuartos quién aporta cada cosa, aquí sale la lista de cada quien para ir palomeando lo que ya está empacado.</p></div>
-    </div>
-  </div>
 </div>
 
 <!-- Firebase SDK -->
@@ -609,7 +502,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
   function dias(s){var a=d(hoyISO()),b=d(s);return Math.round((b-a)/864e5)}
   function r2(v){return Math.round((+v||0)*100)/100}
   function pc(x,t){return t?Math.round(x/t*100):0}
-  function hoySoon(){clearTimeout(hT);hT=setTimeout(function(){renderHoy();renderYs()},60)}
+  function hoySoon(){clearTimeout(hT);hT=setTimeout(function(){renderHoy()},60)}
   function rows(snap){hoySoon();return snap.docs.map(function(x){var o=Object.assign({},x.data());o.id=x.id;return o})}
   function byOrden(a,b){return (a.orden||0)-(b.orden||0)}
   function byFechaDesc(a,b){return String(b.fecha||'').localeCompare(String(a.fecha||''))}
@@ -623,7 +516,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
   (function(){var x=d(plan.inicio),fin=hoyISO().slice(0,7),sel=$('apMes');x.setDate(1);for(var k=0;k<36;k++){var key=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');if(key>fin)break;var o=document.createElement('option');o.value=key;o.textContent=MES[x.getMonth()]+' '+x.getFullYear();sel.appendChild(o);x.setMonth(x.getMonth()+1)}sel.value=fin})();
 
   // pestañas
-  var TABS=['avance','aportes','cuartos','estilo','ofertas','depas','vida','plan','mudanza'];
+  var TABS=['avance','aportes','cuartos','estilo','depas','vida'];
   function show(t){
     if(TABS.indexOf(t)<0)t='avance';
     TABS.forEach(function(k){$('t-'+k).hidden=k!==t});
@@ -728,29 +621,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     });
   }
 
-  function renderCompras(){
-    var box=$('compras');if(!compras.length)return;
-    var grupos={},orden=[];
-    compras.forEach(function(c){var g=c.grupo||'Otros';if(!grupos[g]){grupos[g]=[];orden.push(g)}grupos[g].push(c)});
-    box.innerHTML='';var total=0,hecho=0;
-    orden.forEach(function(g){
-      var sub=grupos[g].reduce(function(s,c){return s+(+c.monto||0)},0);
-      var gh=document.createElement('div');gh.className='group';gh.innerHTML='<span>'+esc(g)+' · '+pc(sub,plan.meta)+'% de la meta</span><span class="num">'+esc(fmt.format(sub))+'</span>';box.appendChild(gh);
-      var ul=document.createElement('ul');ul.className='rows';
-      grupos[g].forEach(function(c){
-        total+=+c.monto||0;if(c.comprado)hecho+=+c.monto||0;
-        var li=document.createElement('li');if(c.comprado)li.className='done';
-        li.innerHTML='<label class="chk"><input type="checkbox" id="c-'+esc(c.id)+'"'+(c.comprado?' checked':'')+'><span><span class="t">'+esc(c.nombre)+'</span>'+(c.nota?'<br><span class="small muted">'+esc(c.nota)+'</span>':'')+'</span></label><span class="amt num">'+esc(fmt.format(+c.monto||0))+'</span>';
-        li.querySelector('input').addEventListener('change',function(e){db.doc('compras/'+c.id).update({comprado:e.target.checked}).catch(fallo)});
-        ul.appendChild(li);
-      });
-      box.appendChild(ul);
-    });
-    var mc=metaCalc();
-    if(invDocs.length){var ex=document.createElement('div');ex.innerHTML='<div class="group"><span>Muebles y cosas por comprar · '+pc(mc.falta,plan.meta)+'% de la meta</span><span class="num">'+esc(fmt.format(mc.falta))+'</span></div><p class="small muted" style="padding-top:6px">Sale de lo que sigue sin marcar en la pestaña Cuartos.</p>'+
-      (mc.imp?'<div class="group"><span>Imprevistos</span><span class="num">'+esc(fmt.format(mc.imp))+'</span></div>':'');box.appendChild(ex)}
-    $('comprasRes').textContent=fmt.format(hecho)+' pagado de '+fmt.format(total)+' · '+pc(hecho,total)+'%';
-  }
+  function renderCompras(){}
 
   // aportaciones al ahorro
   function renderAportes(docs){
@@ -764,13 +635,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       if(last)h+='<p class="small muted">El saldo de Revolut va '+esc(fmt.format(Math.abs(last.saldo-T)))+(last.saldo>=T?' arriba':' abajo')+' de lo aportado. La diferencia son intereses, compras pagadas desde ahí o depósitos sin anotar.</p>';
       $('apRes').innerHTML=h;
     }
-    // un renglón por mes desde que empezaron hasta hoy
-    var ks=[],x=d(plan.inicio),fin=d(hoyISO());x.setDate(1);
-    while(x<=fin){ks.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'));x.setMonth(x.getMonth()+1)}
-    Object.keys(mm).forEach(function(k){if(ks.indexOf(k)<0)ks.push(k)});ks.sort().reverse();
-    function celda(v){return '<td class="num">'+esc(fmt.format(v))+'<br><span class="small muted">'+(v>=cu?'completo':'faltan '+esc(fmt.format(cu-v)))+' · '+pc(v,cu)+'%</span></td>'}
-    $('apMeses').innerHTML='<table><thead><tr><th>Mes</th><th>Eugenia</th><th>Luis</th></tr></thead><tbody>'+ks.map(function(k){var v=mm[k]||{eugenia:0,luis:0},p=k.split('-');
-      return '<tr><td>'+MES[+p[1]-1]+' '+p[0]+'</td>'+celda(v.eugenia)+celda(v.luis)+'</tr>'}).join('')+'</tbody></table><p class="small muted" style="padding-top:8px">Meta de cada quien: '+esc(fmt.format(cu))+' al mes.</p>';
     var ul=$('apList');if(!docs.length)return;ul.innerHTML='';
     docs.forEach(function(a){
       var li=document.createElement('li'),lu=a.quien==='luis';
@@ -797,7 +661,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     return [0,0];
   }
   function renderInv(docs){
-    invDocs=docs;renderMetaCalc();renderLleva();renderCompras();
+    invDocs=docs;renderMetaCalc();renderCompras();
     var box=$('inv');if(!docs.length)return;
     var act=document.activeElement&&document.activeElement.id;
     box.innerHTML='';
@@ -818,7 +682,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       var ul=document.createElement('ul');ul.className='rows';
       g[c].forEach(function(i){
         var li=document.createElement('li');if(i.quien)li.className='res';
-        var h='<span class="nm">'+esc(i.nombre)+'</span>'+(i.quien?'':'<input type="number" class="pr" id="pr-'+esc(i.id)+'" min="0" step="50" inputmode="decimal" placeholder="$ aprox." aria-label="Precio aproximado de '+esc(i.nombre)+'" value="'+(precioDe(i)||'')+'">')+'<span class="pick">';
+        var iu=safeUrl(i.url);
+        var h='<span class="nm">'+esc(i.nombre)+(iu?' <a href="'+esc(iu)+'" target="_blank" rel="noopener" class="small" style="font-weight:400">🔗 ver</a>':'')+'</span>'+(i.quien?'':'<input type="number" class="pr" id="pr-'+esc(i.id)+'" min="0" step="50" inputmode="decimal" placeholder="$ aprox." aria-label="Precio aproximado de '+esc(i.nombre)+'" value="'+(precioDe(i)||'')+'">')+'<span class="pick">';
         QUIEN.forEach(function(q){h+='<button type="button" class="'+q[2]+'" data-q="'+q[0]+'" aria-pressed="'+(i.quien===q[0])+'">'+q[1]+'</button>'});
         h+='<button type="button" class="x" data-del="1" aria-label="Quitar '+esc(i.nombre)+' de la lista">✕</button></span>';
         if(i.quien==='comprado'){
@@ -876,36 +741,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     $('gastos').innerHTML=h;
   }
 
-  // lista de deseos y ofertas
-  function renderDeseos(docs){
-    var box=$('deseos');if(!docs.length){box.innerHTML='<p class="empty">Agreguen productos concretos con el precio al que los quieren. Cada semana se revisa su precio y se avisa si baja de ahí.</p>';return}
-    box.innerHTML='';
-    docs.forEach(function(o){
-      var u=safeUrl(o.url),mu=safeUrl(o.mejorUrl),obj=+o.precioObjetivo||0,mp=+o.mejorPrecio||0,c=document.createElement('div');c.className='item';
-      var est=!mp?'<span class="chip plain">Sin precio visto todavía</span>':mp<=obj?'<span class="chip ok">Ya bajó de su precio</span>':'<span class="chip warn">Le faltan '+esc(fmt.format(mp-obj))+' · '+pc(mp-obj,mp)+'%</span>';
-      c.innerHTML='<div class="top"><b>'+esc(o.nombre)+'</b><button class="x" type="button" aria-label="Quitar '+esc(o.nombre)+'">✕</button></div>'+
-        '<div class="chips"><span class="chip">Lo quieren en '+esc(fmt.format(obj))+'</span>'+est+'</div>'+
-        (mp?'<div class="small">Mejor precio visto: <b class="num">'+esc(fmt.format(mp))+'</b>'+(o.mejorTienda?' en '+esc(o.mejorTienda):'')+(o.mejorFecha?' · '+esc(fechaTxt(o.mejorFecha)):'')+(mu?' · <a href="'+esc(mu)+'" target="_blank" rel="noopener">Ver</a>':'')+'</div>':'')+
-        (o.nota?'<div class="small muted">'+esc(o.nota)+'</div>':'')+histo(o.historial,obj)+
-        (u?'<div class="small"><a href="'+esc(u)+'" target="_blank" rel="noopener">Link que guardaron</a></div>':'');
-      c.querySelector('button').addEventListener('click',function(){db.doc('deseos/'+o.id).delete().catch(fallo)});
-      box.appendChild(c);
-    });
-  }
-  function renderOfertas(docs){
-    var box=$('ofertas');if(!docs.length)return;box.innerHTML='';
-    docs.slice(0,12).forEach(function(o){
-      var u=safeUrl(o.url),desc=(+o.precioAntes>+o.precio&&+o.precio>0)?Math.round((1-o.precio/o.precioAntes)*100):0;
-      var c=document.createElement('div');c.className='item';
-      c.innerHTML='<div class="top"><b>'+esc(o.titulo)+'</b><span class="amt num">'+(+o.precio?esc(fmt.format(+o.precio)):'')+'</span></div>'+
-        '<div class="chips">'+(o.tienda?'<span class="chip">'+esc(o.tienda)+'</span>':'')+(desc?'<span class="chip ok">-'+desc+'%</span>':'')+(+o.precioAntes?'<span class="chip plain">antes '+esc(fmt.format(+o.precioAntes))+'</span>':'')+'</div>'+
-        (o.nota?'<div class="small muted">'+esc(o.nota)+'</div>':'')+
-        '<div class="pick"><button type="button" class="ok" data-g="si" aria-pressed="'+(o.gusta==='si')+'">Me late</button><button type="button" class="warn" data-g="no" aria-pressed="'+(o.gusta==='no')+'">No es mi estilo</button></div>'+
-        '<div class="small muted">'+(o.fecha?'Visto el '+esc(fechaTxt(o.fecha)):'')+(u?' · <a href="'+esc(u)+'" target="_blank" rel="noopener">Ver en la tienda</a>':'')+'</div>';
-      c.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){db.doc('ofertas/'+o.id).update({gusta:o.gusta===b.dataset.g?'':b.dataset.g}).catch(fallo)})});
-      box.appendChild(c);
-    });
-  }
 
   // muro de inspiración
   var assets=null;
@@ -1371,75 +1206,9 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     if(act&&/^(nt|me|ml)-/.test(act)&&$(act))$(act).focus();
   }
 
-  // calendario y checklist
   var MESL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  var TIPOS={visita:['Visita','lav'],oferta:['Ofertas','warn'],meta:['Meta','ok'],otro:['Otro','plain']};
-  var calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel='';
-  function tipo(f){return TIPOS[f.tipo]||TIPOS.otro}
-  function finDe(f){return f.fin&&f.fin>f.fecha?f.fin:f.fecha}
-  function enDia(f,s){return s>=f.fecha&&s<=finDe(f)}
-  function rango(f){var a=d(f.fecha),b=d(finDe(f)),y=' '+String(b.getFullYear()).slice(2);
-    return f.fin&&f.fin>f.fecha?a.getDate()+(a.getMonth()===b.getMonth()?'':' '+MES[a.getMonth()])+'–'+b.getDate()+' '+MES[b.getMonth()]+y:a.getDate()+' '+MES[a.getMonth()]+y}
-  // una meta de ahorro se compara con el avance real y con la proyección a su fecha
-  function metaEstado(f){
-    var p=+f.pct||0,last=ahorros[ahorros.length-1];if(f.tipo!=='meta'||!p)return '';
-    if(curPct>=p)return '<span class="chip ok">Lograda</span>';
-    if(dias(f.fecha)<0)return '<span class="chip warn">No se alcanzó a tiempo · llevan '+curPct.toFixed(0)+'%</span>';
-    if(!last)return '';
-    var m=Math.max(0,Math.floor((d(f.fecha)-d(last.fecha))/(864e5*30.44))),proy=saldoEn(+last.saldo,m)/plan.meta*100;
-    return '<span class="chip '+(proy>=p?'ok':'warn')+'">'+(proy>=p?'Van bien':'Van justos')+' · llevan '+curPct.toFixed(0)+'% de '+p+'%</span>';
-  }
-  function renderCal(){
-    var n=new Date(calY,calM+1,0).getDate(),off=(new Date(calY,calM,1).getDay()+6)%7,hoy=hoyISO();
-    $('calMes').textContent=MESL[calM]+' '+calY;
-    var h=['L','M','M','J','V','S','D'].map(function(x){return '<span class="dow">'+x+'</span>'}).join('');
-    for(var i=0;i<off;i++)h+='<span></span>';
-    for(var k=1;k<=n;k++){
-      var s=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(k).padStart(2,'0'),ev=feDocs.filter(function(f){return enDia(f,s)});
-      h+='<button type="button" class="day'+(s===hoy?' hoy':'')+(s===calSel?' sel':'')+'" data-d="'+s+'" aria-label="'+k+' de '+MESL[calM]+(ev.length?', '+ev.length+(ev.length===1?' evento':' eventos'):'')+'"><b>'+k+'</b><span class="dots">'+ev.slice(0,3).map(function(f){return '<i class="'+tipo(f)[1]+'"></i>'}).join('')+'</span></button>';
-    }
-    $('cal').innerHTML=h;
-    var box=$('calDia');box.hidden=!calSel;
-    if(calSel){var e2=feDocs.filter(function(f){return enDia(f,calSel)});
-      box.innerHTML='<b>'+esc(fechaTxt(calSel))+'</b>'+(e2.length?e2.map(function(f){return '<span class="chip '+tipo(f)[1]+'">'+esc(f.titulo)+'</span>'}).join(''):'<span class="muted">Nada agendado. Pueden agregarlo abajo.</span>')}
-  }
-  $('cal').addEventListener('click',function(e){var b=e.target.closest('.day');if(!b)return;calSel=b.dataset.d;$('feFecha').value=calSel;renderCal()});
-  $('calPrev').addEventListener('click',function(){calM--;if(calM<0){calM=11;calY--}renderCal()});
-  $('calNext').addEventListener('click',function(){calM++;if(calM>11){calM=0;calY++}renderCal()});
-  $('feTipo').addEventListener('change',function(){var m=$('feTipo').value==='meta';$('fePctL').hidden=!m;$('feFinL').hidden=m});
-  function renderFechas(){
-    renderCal();
-    var ul=$('fechas');if(!feDocs.length)return;ul.innerHTML='';
-    // se muestran las que vienen y las de los últimos 30 días
-    feDocs.filter(function(f){return dias(finDe(f))>=-30}).forEach(function(f){
-      var n=dias(f.fecha),nf=dias(finDe(f)),li=document.createElement('li');if(nf<0)li.className='past';
-      li.innerHTML='<span class="when">'+esc(rango(f))+'</span>'+
-        '<span><b>'+esc(f.titulo)+'</b> <span class="chip '+tipo(f)[1]+'">'+tipo(f)[0]+'</span> '+metaEstado(f)+(f.nota?'<br><span class="small muted">'+esc(f.nota)+'</span>':'')+'</span>'+
-        '<span class="small muted">'+(nf<0?'ya pasó':n<=0?(nf>0?'en curso':'hoy'):'en '+n+' días')+' <button class="x" type="button" aria-label="Quitar '+esc(f.titulo)+'">✕</button></span>';
-      li.querySelector('button').addEventListener('click',function(){db.doc('fechas/'+f.id).delete().catch(fallo)});
-      ul.appendChild(li);
-    });
-  }
+  function renderFechas(){}
   var Q3=[['eugenia','Eugenia','eu'],['luis','Luis','lu'],['juntos','Juntos','ok']];
-  function renderCheck(docs){
-    checkDocs=docs;var ul=$('check');if(!docs.length)return;
-    var act=document.activeElement&&document.activeElement.id;ul.innerHTML='';var n=0;
-    docs.forEach(function(t){
-      if(t.listo)n++;
-      var li=document.createElement('li');if(t.listo)li.className='done';
-      var dd=t.fecha&&!t.listo?dias(t.fecha):null;
-      li.innerHTML='<label class="chk"><input type="checkbox" id="k-'+esc(t.id)+'"'+(t.listo?' checked':'')+'><span><span class="t">'+esc(t.texto)+'</span>'+(t.nota?'<br><span class="small muted">'+esc(t.nota)+'</span>':'')+(dd!=null?'<br><span class="chip '+(dd<0?'warn':dd<=7?'lav':'plain')+'">'+(dd<0?'Venció hace '+(-dd)+' días':dd===0?'Es hoy':'En '+dd+' días')+'</span>':'')+'</span></label>'+
-        '<span class="pick">'+Q3.map(function(q){return '<button type="button" class="'+q[2]+'" data-q="'+q[0]+'" aria-pressed="'+(t.quien===q[0])+'">'+q[1]+'</button>'}).join('')+'<button type="button" class="x" data-del="1" aria-label="Quitar '+esc(t.texto)+'">✕</button></span>'+
-        '<input type="date" class="fd" id="kf-'+esc(t.id)+'" value="'+esc(t.fecha||'')+'" aria-label="Fecha límite de '+esc(t.texto)+'">';
-      var ref=db.doc('checklist/'+t.id);
-      li.querySelector('input[type=checkbox]').addEventListener('change',function(e){ref.update({listo:e.target.checked}).catch(fallo)});
-      li.querySelectorAll('button').forEach(function(b2){b2.addEventListener('click',function(){(b2.dataset.del?ref.delete():ref.update({quien:t.quien===b2.dataset.q?'':b2.dataset.q})).catch(fallo)})});
-      var fd=li.querySelector('.fd');fd.addEventListener('change',function(){if(fd.value!==(t.fecha||''))ref.update({fecha:fd.value}).catch(fallo)});
-      ul.appendChild(li);
-    });
-    if(act&&act.indexOf('kf-')===0&&$(act))$(act).focus();
-    $('checkRes').textContent=n+' de '+docs.length+' listos · '+pc(n,docs.length)+'%';
-  }
 
   // meta calculada: gastos fijos de entrada + lo que falta comprar + imprevistos
   function precioDe(i){return i.precio!=null?(+i.precio||0):(+precios[i.id]||0)}
@@ -1451,31 +1220,25 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
   }
   function renderMetaCalc(){
     if(!invDocs.length)return;
-    var m=metaCalc(),df=m.tot-plan.meta;
-    $('metaCalc').innerHTML='<div class="figs"><div class="fig"><b class="num">'+esc(fmt.format(m.tot))+'</b><span>Necesitarían juntar</span></div>'+
-      '<div class="fig"><b class="num">'+esc(fmt.format(m.fijo))+'</b><span>Entrar al depa y súper</span></div>'+
-      '<div class="fig"><b class="num">'+esc(fmt.format(m.falta))+'</b><span>Lo que falta comprar</span></div>'+
-      (m.imp?'<div class="fig"><b class="num">'+esc(fmt.format(m.imp))+'</b><span>Imprevistos</span></div>':'')+'</div>'+
-      '<p class="small">'+(Math.abs(df)<1?'Coincide con su meta actual.':'Su meta actual es '+esc(fmt.format(plan.meta))+': '+esc(fmt.format(Math.abs(df)))+(df>0?' menos de lo que sale aquí.':' más de lo que sale aquí.'))+'</p>'+
-      '<p class="small muted">Cada cosa que marquen como de Eugenia, de Luis o comprada deja de contar. '+(m.sin?m.sin+(m.sin===1?' cosa no tiene':' cosas no tienen')+' precio aproximado. ':'')+'Marquen primero lo que ya tienen y luego decidan si usan este número como meta.</p>';
-    $('btnMeta').disabled=Math.abs(df)<1;
-    if(document.activeElement!==$('impPct'))$('impPct').value=+plan.imprevistosPct||'';
+    var real=0,sin=0,comprado=0;
+    invDocs.forEach(function(i){
+      var p=precioDe(i);
+      if(i.quien==='comprado'){comprado+=+i.costo||p}
+      else{real+=p;if(!p)sin++}
+    });
+    var esperado=plan.meta,df=real-esperado;
+    var estado=Math.abs(df)<1?'ok':(df>0?'warn':'ok');
+    $('metaCalc').innerHTML='<div class="figs">'+
+      '<div class="fig"><b class="num" style="color:var(--lav-ink)">'+esc(fmt.format(esperado))+'</b><span>Esperado (referencia)</span></div>'+
+      '<div class="fig"><b class="num" style="color:var(--'+(df>0?'warn':'ok')+'-ink)">'+esc(fmt.format(real))+'</b><span>Real (suma de la lista)</span></div>'+
+      '<div class="fig"><b class="num">'+esc(fmt.format(comprado))+'</b><span>Ya comprado</span></div></div>'+
+      '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pc(real,esperado)+'"><i style="width:'+Math.min(100,real/esperado*100)+'%;background:var(--'+(df>0?'warn':'ok')+'-ink)"></i></div>'+
+      '<p class="small">'+(Math.abs(df)<1?'La lista coincide con el esperado.':(df>0?'La lista es '+esc(fmt.format(df))+' más de lo esperado.':'La lista es '+esc(fmt.format(Math.abs(df)))+' menos de lo esperado.'))+'</p>'+
+      (sin?'<p class="small muted">'+sin+(sin===1?' producto no tiene':' productos no tienen')+' precio. Agréguenlo para tener un total más preciso.</p>':'');
   }
-  $('impPct').addEventListener('change',function(){if(db)db.doc('meta/plan').update({imprevistosPct:Math.max(0,Math.min(30,parseFloat($('impPct').value)||0))}).catch(fallo)});
-  $('formMeta').addEventListener('submit',function(e){e.preventDefault();if(!db||!invDocs.length)return;db.doc('meta/plan').update({meta:metaCalc().tot}).catch(fallo)});
 
-  // fondo de emergencia y resumen del mes
   function gastoComp(){return (+vida.renta||0)+(+vida.servicios||0)+(+vida.super||0)+(+vida.salidas||0)+(+vida.otros||0)}
-  function renderFondo(){
-    var f=fondoDoc||{},m=+f.meta||0,sv=+f.saldo||0,sug=gastoComp()*3,h='';
-    if(m>0)h+='<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pc(sv,m)+'"><i style="width:'+Math.min(100,sv/m*100)+'%"></i></div><div class="figs"><div class="fig"><b class="num">'+pc(sv,m)+'%</b><span>del fondo</span></div><div class="fig"><b class="num">'+esc(fmt.format(sv))+'</b><span>Llevan</span></div><div class="fig"><b class="num">'+esc(fmt.format(Math.max(0,m-sv)))+'</b><span>Falta</span></div></div>';
-    else h+='<p class="empty">Un colchón para no llegar al depa en ceros. Anoten cuánto quieren juntar y cuánto llevan.</p>';
-    if(sug>0)h+='<p class="small muted">Referencia común: 3 meses de sus gastos compartidos, que según la pestaña Mes a mes serían '+esc(fmt.format(sug))+'.</p>';
-    $('fondo').innerHTML=h;
-    if(document.activeElement!==$('foSaldo'))$('foSaldo').value=f.saldo!=null?f.saldo:'';
-    if(document.activeElement!==$('foMeta'))$('foMeta').value=m||'';
-  }
-  $('formFondo').addEventListener('submit',function(e){e.preventDefault();if(!db)return;db.doc('meta/fondo').set({saldo:r2(parseFloat($('foSaldo').value)),meta:r2(parseFloat($('foMeta').value)),fecha:hoyISO()}).catch(fallo)});
+  function renderFondo(){}
   function renderResumen(docs){
     if(!docs.length)return;var r=docs[0];
     $('resCard').hidden=false;$('resTit').textContent=r.titulo||'Resumen del mes';$('resTxt').textContent=r.texto||'';$('resFecha').textContent=r.fecha?fechaTxt(r.fecha):'';
@@ -1498,7 +1261,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     function caja(cl,nom,paga,su){return '<div class="who '+cl+'"><span class="small">'+nom+' paga</span><b class="num">'+esc(fmt.format(paga))+'</b><span class="small">'+pc(paga,g)+'% de lo compartido · '+pc(paga,su)+'% de su sueldo</span><span class="small">Le quedan '+esc(fmt.format(su-paga))+' para ahorro y gastos personales</span></div>'}
     $('vidaRes').innerHTML='<div class="head"><h2>Cada mes, ya viviendo juntos</h2><span class="small muted">Compartido: '+esc(fmt.format(g))+'</span></div><div class="two">'+caja('eu','Eugenia',ge,se)+caja('lu','Luis',gl,sl)+'</div>'+
       '<div class="chips"><span class="chip '+(rp>35?'warn':'ok')+'">La renta es '+rp.toFixed(0)+'% de su ingreso · '+(rp>35?'alta, lo sano es hasta 30 a 35%':'en rango sano')+'</span><span class="chip plain">Lo compartido es '+pc(g,T)+'% de su ingreso</span></div>';
-    renderFondo();
   }
   function guardaVida(){
     if(!db)return;var o={reparto:vida.reparto==='5050'?'5050':'proporcional'};
@@ -1526,51 +1288,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     $('tarBar').innerHTML='<i class="eu" style="width:'+(n.eugenia/T*100)+'%"></i><i class="lu" style="width:'+(n.luis/T*100)+'%"></i><i class="ok" style="width:'+(n.juntos/T*100)+'%"></i>';
   }
 
-  // mudanza: papeles, fletes y qué lleva cada quien
-  function renderPapeles(docs){
-    papDocs=docs;
-    var ul=$('papeles');if(!docs.length)return;ul.innerHTML='';var ok=0,tot=0;
-    docs.forEach(function(p2){
-      var comp=p2.aplica==='ambos';tot+=comp?1:2;ok+=comp?(p2.eu?1:0):((p2.eu?1:0)+(p2.lu?1:0));
-      var li=document.createElement('li');
-      li.innerHTML='<span class="nm">'+esc(p2.nombre)+(p2.nota?'<br><span class="small muted">'+esc(p2.nota)+'</span>':'')+'</span><span class="pick">'+
-        (comp?'<button type="button" class="ok" data-k="eu" aria-pressed="'+!!p2.eu+'">Listo</button>':'<button type="button" class="eu" data-k="eu" aria-pressed="'+!!p2.eu+'">Eugenia</button><button type="button" class="lu" data-k="lu" aria-pressed="'+!!p2.lu+'">Luis</button>')+
-        '<button type="button" class="x" data-del="1" aria-label="Quitar '+esc(p2.nombre)+'">✕</button></span>';
-      li.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
-        var ref=db.doc('papeles/'+p2.id),u={};if(b.dataset.del){ref.delete().catch(fallo);return}u[b.dataset.k]=!p2[b.dataset.k];ref.update(u).catch(fallo)})});
-      ul.appendChild(li);
-    });
-    $('papRes').textContent=ok+' de '+tot+' listos · '+pc(ok,tot)+'%';
-  }
-  function renderFletes(docs){
-    var ul=$('fletes');if(!docs.length){ul.innerHTML='<li class="empty">Anoten cada cotización para compararlas. Pidan al menos tres.</li>';$('flRes').textContent='';return}
-    ul.innerHTML='';docs.sort(function(a,b){return (+a.precio||0)-(+b.precio||0)});
-    var pres=(compras.filter(function(c){return /flete/i.test(c.nombre||'')})[0]||{}).monto||0,min=+docs[0].precio||0;
-    docs.forEach(function(f,ix){
-      var li=document.createElement('li');
-      li.innerHTML='<span class="nm"><b>'+esc(f.empresa)+'</b>'+(ix===0&&docs.length>1?' <span class="chip ok">La más barata</span>':'')+(f.nota?'<br><span class="small muted">'+esc(f.nota)+'</span>':'')+'</span><span class="amt num">'+esc(fmt.format(+f.precio||0))+'</span><span class="pick"><button type="button" class="ok" data-el="1" aria-pressed="'+!!f.elegido+'">Elegida</button><button type="button" class="x" data-del="1" aria-label="Quitar '+esc(f.empresa)+'">✕</button></span>';
-      li.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){var ref=db.doc('fletes/'+f.id);(b.dataset.del?ref.delete():ref.update({elegido:!f.elegido})).catch(fallo)})});
-      ul.appendChild(li);
-    });
-    $('flRes').textContent=pres?(min<=pres?'La mejor queda '+fmt.format(pres-min)+' abajo de su presupuesto':'La mejor rebasa su presupuesto por '+fmt.format(min-pres)):'';
-  }
-  function renderLleva(){
-    var box=$('lleva'),l={eugenia:[],luis:[]};invDocs.forEach(function(i){if(l[i.quien])l[i.quien].push(i)});
-    if(!l.eugenia.length&&!l.luis.length)return;
-    box.innerHTML='';
-    [['eugenia','Eugenia','eu'],['luis','Luis','lu']].forEach(function(q){
-      var n=l[q[0]].filter(function(i){return i.empacado}).length,d2=document.createElement('div');
-      d2.innerHTML='<div class="head"><span class="chip '+q[2]+'">'+q[1]+' lleva '+l[q[0]].length+'</span><span class="small muted">'+n+' empacadas · '+pc(n,l[q[0]].length)+'%</span></div>';
-      var ul=document.createElement('ul');ul.className='rows';
-      l[q[0]].forEach(function(i){
-        var li=document.createElement('li');if(i.empacado)li.className='done';
-        li.innerHTML='<label class="chk"><input type="checkbox" id="em-'+esc(i.id)+'"'+(i.empacado?' checked':'')+'><span><span class="t">'+esc(i.nombre)+'</span><br><span class="small muted">'+esc(i.cuarto||'')+'</span></span></label>';
-        li.querySelector('input').addEventListener('change',function(e){db.doc('inventario/'+i.id).update({empacado:e.target.checked}).catch(fallo)});
-        ul.appendChild(li);
-      });
-      d2.appendChild(ul);box.appendChild(d2);
-    });
-  }
 
   // mini gráfica de precios: una línea con el objetivo punteado
   function histo(h,obj){
@@ -1595,34 +1312,6 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     $('mercTxt').textContent=(v.length>1?'Desde '+fechaTxt(v[0].fecha)+' el promedio '+(Math.abs(d0)<1?'no ha cambiado':(d0>0?'subió ':'bajó ')+fmt.format(Math.abs(d0))+' ('+pc(Math.abs(d0),ps[0])+'%)')+'. ':'Con más semanas se verá la tendencia. ')+(u.min&&u.max?'Esta semana van de '+fmt.format(u.min)+' a '+fmt.format(u.max)+'. ':'')+(u.nota||'');
   }
 
-  // ¿y si…?: proyección con otros números, sin guardar nada
-  (function(){var x=new Date(),sel=$('ysMes');for(var k=0;k<14;k++){var o=document.createElement('option');o.value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');o.textContent=MES[x.getMonth()]+' '+x.getFullYear();sel.appendChild(o);x.setMonth(x.getMonth()+1,1)}
-    var dc=sel.querySelector('[value$="-12"]');if(dc)sel.value=dc.value})();
-  function proyecta(saldo,desde,M,meta,extra,mesExtra){
-    var r=plan.tasaAnual/12,b=saldo,n=0,f=d(desde),puesto=!extra;
-    while(b<meta&&n<600){n++;f=d(desde);f.setMonth(f.getMonth()+n);b=b*(1+r)+M;var ym=f.getFullYear()+'-'+String(f.getMonth()+1).padStart(2,'0');if(!puesto&&ym>=mesExtra){b+=extra;puesto=true}if(M<=0&&puesto&&r<=0)break}
-    return {n:n,f:f,ok:b>=meta};
-  }
-  function renderYs(){
-    var last=ahorros[ahorros.length-1];if(!last)return;
-    if(!ysToco){if(document.activeElement!==$('ysMensual'))$('ysMensual').value=plan.aporteMensual;if(document.activeElement!==$('ysMeta'))$('ysMeta').value=plan.meta}
-    var M=parseFloat($('ysMensual').value)||0,meta=parseFloat($('ysMeta').value)||plan.meta,ex=parseFloat($('ysExtra').value)||0,sv=+last.saldo||0;
-    var base=proyecta(sv,last.fecha,plan.aporteMensual,plan.meta,0,''),y=proyecta(sv,last.fecha,M,meta,ex,$('ysMes').value);
-    var fin=d(plan.ventanaHasta),ini=d(plan.ventanaDesde),h='';
-    if(!y.ok)h='<p>Con esos números no llegan a la meta. Suban el ahorro mensual o bajen la meta.</p>';
-    else{
-      var dn=y.n-base.n;
-      h='<div class="figs"><div class="fig"><b>'+MES[y.f.getMonth()]+' '+y.f.getFullYear()+'</b><span>Llegarían a '+esc(fmt.format(meta))+'</span></div><div class="fig"><b class="num">'+y.n+'</b><span>meses desde hoy</span></div></div>'+
-        '<div class="chips"><span class="chip '+(y.f>fin?'warn':'ok')+'">'+(y.f>fin?'Después de su ventana (termina en octubre 2027)':y.f<ini?'Antes de agosto 2027':'Dentro de su ventana')+'</span>'+(dn?'<span class="chip plain">'+Math.abs(dn)+(Math.abs(dn)===1?' mes ':' meses ')+(dn<0?'antes':'después')+' que con el plan actual</span>':'<span class="chip plain">Igual que el plan actual</span>')+'</div>';
-    }
-    // cuánto haría falta al mes para llegar justo al inicio de la ventana
-    var m=Math.max(1,Math.round((ini-d(last.fecha))/(864e5*30.44))),r=plan.tasaAnual/12,g=Math.pow(1+r,m),nec=(meta-sv*g-ex)/(r?(g-1)/r:m);
-    h+='<p class="small muted">Para tener '+esc(fmt.format(meta))+' el 1 de agosto de 2027 necesitarían ahorrar '+esc(fmt.format(Math.max(0,nec)))+' al mes entre los dos'+(ex?', contando el extra':'')+' ('+esc(fmt.format(Math.max(0,nec)/2))+' cada quien).</p>';
-    $('ysRes').innerHTML=h;
-  }
-  ['ysMensual','ysMeta','ysExtra','ysMes'].forEach(function(i){$(i).addEventListener('input',function(){ysToco=true;renderYs()})});
-  $('ysLista').addEventListener('click',function(){if(!invDocs.length)return;ysToco=true;$('ysMeta').value=metaCalc().tot;renderYs()});
-  $('formYs').addEventListener('submit',function(e){e.preventDefault();var M=parseFloat($('ysMensual').value);if(!db||!(M>0))return;db.doc('meta/plan').update({aporteMensual:r2(M)}).catch(fallo)});
 
   // inicio: aportación del mes, esta semana y pendientes de cada quien
   function porMes(){var mm={};apDocs.forEach(function(a){var q=a.quien==='luis'?'luis':'eugenia',k=a.mes||String(a.fecha).slice(0,7);mm[k]=mm[k]||{eugenia:0,luis:0};mm[k][q]+=+a.monto||0});return mm}
@@ -1633,23 +1322,16 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     function racha(q){var n=0,x=d(ym+'-01');if(este[q]<cu)x.setMonth(x.getMonth()-1);for(var k=0;k<60;k++){var key=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0');if(mm[key]&&mm[key][q]>=cu){n++;x.setMonth(x.getMonth()-1)}else break}return n}
     $('mesAp').innerHTML=[['eugenia','Eugenia','eu'],['luis','Luis','lu']].map(function(q){var v=este[q[0]],rc=racha(q[0]),at=atraso(q[0]);
       return '<div class="who '+q[2]+'"><span class="small">'+q[1]+'</span><b class="num">'+esc(fmt.format(v))+'</b><span class="small">'+(v>=cu?'Completo este mes':'Le faltan '+esc(fmt.format(cu-v))+' · '+pc(v,cu)+'%')+'</span>'+(at.t?'<span class="small"><b style="font-family:inherit;font-size:inherit;font-weight:700">Debe '+esc(fmt.format(at.t))+' de '+esc(at.l.join(', '))+'</b></span>':'')+'<span class="small"><span class="small">'+(rc?'Racha: '+rc+(rc===1?' mes completo':' meses completos'):'Sin racha todavía')+'</span></div>'}).join('');
-    // esta semana
-    var prox=feDocs.filter(function(f){return dias(finDe(f))>=0&&dias(f.fecha)<=7}),ul=$('semana');
-    if(!prox.length){var sig=feDocs.filter(function(f){return dias(f.fecha)>7})[0];ul.innerHTML='<li class="empty" style="display:block">Nada agendado en los próximos 7 días.'+(sig?' Lo siguiente es '+esc(sig.titulo)+', en '+dias(sig.fecha)+' días.':'')+'</li>'}
-    else ul.innerHTML=prox.map(function(f){var n=dias(f.fecha);return '<li><span class="when">'+esc(rango(f))+'</span><span><b>'+esc(f.titulo)+'</b> <span class="chip '+tipo(f)[1]+'">'+tipo(f)[0]+'</span> '+metaEstado(f)+'</span><span class="small muted">'+(n<=0?(dias(finDe(f))>0?'en curso':'hoy'):'en '+n+' días')+'</span></li>'}).join('');
     // pendientes por persona
     $('pend').innerHTML=[['eugenia','Eugenia','eu','votoEu','eu'],['luis','Luis','lu','votoLu','lu']].map(function(q){
       var l=[],at=atraso(q[0]);
       if(at.t)l.push('Completar '+fmt.format(at.t)+' de '+at.l.join(', '));
       if(este[q[0]]<cu)l.push('Aportar '+fmt.format(cu-este[q[0]])+' de '+MESL[+ym.slice(5)-1].toLowerCase());
       var fv=inspoDocs.filter(function(f){return okAsset(f)&&!f[q[3]]}).length;if(fv)l.push('Votar '+fv+(fv===1?' foto':' fotos')+' en Estilo');
-      checkDocs.filter(function(t){return !t.listo&&(t.quien===q[0]||t.quien==='juntos')}).sort(function(a,b){return String(a.fecha||'9').localeCompare(String(b.fecha||'9'))}).slice(0,4).forEach(function(t){l.push(t.texto+(t.quien==='juntos'?' (juntos)':'')+(t.fecha?' · '+(dias(t.fecha)<0?'vencido':dias(t.fecha)===0?'hoy':'en '+dias(t.fecha)+' días'):''))});
-      var pp=papDocs.filter(function(x){return x.aplica!=='ambos'&&!x[q[4]]}).length;if(pp)l.push(pp+(pp===1?' papel':' papeles')+' para rentar por juntar');
       return '<div class="who '+q[2]+'"><span class="small"><b style="font-size:1rem">'+q[1]+'</b></span>'+(l.length?'<ul class="plist">'+l.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'<span class="small">Nada pendiente.</span>')+'</div>'}).join('');
     var g=[],last=ahorros[ahorros.length-1];
     if(last&&dias(last.fecha)<-30)g.push('Actualizar el saldo de Revolut (última vez hace '+(-dias(last.fecha))+' días)');
     var sm=invDocs.filter(function(i){return !i.quien}).length;if(sm&&invDocs.length)g.push(sm+(sm===1?' cosa':' cosas')+' sin marcar en Cuartos');
-    var sa=checkDocs.filter(function(t){return !t.listo&&!t.quien}).length;if(sa)g.push(sa+(sa===1?' pendiente':' pendientes')+' sin responsable en Plan');
     var pl=platDocs.filter(function(x){return !x.resuelto}).length;if(pl)g.push(pl+(pl===1?' tema':' temas')+' por platicar');
     $('pendGen').innerHTML=g.map(function(x){return '<span class="chip plain">'+esc(x)+'</span>'}).join('');
   }
@@ -1691,22 +1373,13 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
   alta('formAp',function(){var v=parseFloat($('apMonto').value),f=$('apFecha').value;if(!(v>0)||!f)return;var last=ahorros[ahorros.length-1],suma=$('apSuma').checked&&(!last||f>=last.fecha);
     // el saldo nuevo es el último saldo anotado más este depósito
     return db.collection('aportes').add({fecha:f,quien:$('apQuien').value,monto:r2(v),mes:$('apMes').value||f.slice(0,7)}).then(function(){if(suma)return db.doc('ahorros/'+f).set({fecha:f,saldo:r2((last?+last.saldo:0)+v)})})});
-  alta('formInv',function(){var v=$('inInv').value.trim();if(!v)return;return db.collection('inventario').add({nombre:v,cuarto:$('inCuarto').value,quien:'',orden:Date.now()})});
-  alta('formDes',function(){var v=$('desNombre').value.trim(),p=parseFloat($('desPrecio').value);if(!v||!(p>0))return;return db.collection('deseos').add({nombre:v,precioObjetivo:r2(p),url:safeUrl($('desUrl').value.trim()),fecha:hoyISO()})});
+  alta('formInv',function(){var v=$('inInv').value.trim();if(!v)return;var doc={nombre:v,cuarto:$('inCuarto').value,quien:'',orden:Date.now()};var p=parseFloat($('inPrecio').value);if(p>0)doc.precio=r2(p);var u=$('inUrl').value.trim();if(safeUrl(u))doc.url=u;return db.collection('inventario').add(doc)});
   alta('formDep',function(){var v=$('depTitulo').value.trim();if(!v)return;return db.collection('depas').add({titulo:v,renta:r2(parseFloat($('depRenta').value)),url:safeUrl($('depUrl').value.trim()),fecha:hoyISO(),manual:true})});
-  alta('formChk',function(){var v=$('chkTexto').value.trim();if(!v)return;return db.collection('checklist').add({texto:v,listo:false,orden:Date.now()})});
   alta('formAc',function(){var v=$('acTexto').value.trim();if(!v)return;return db.collection('acuerdos').add({texto:v,grupo:$('acGrupo').value,orden:Date.now()})});
   alta('formPl',function(){var v=$('plTema').value.trim();if(!v)return;return db.collection('platicar').add({tema:v,resuelto:false,orden:Date.now()})});
   alta('formTar',function(){var v=$('tarNombre').value.trim();if(!v)return;return db.collection('tareas').add({nombre:v,quien:'',orden:Date.now()})});
-  alta('formPap',function(){var v=$('papNombre').value.trim();if(!v)return;return db.collection('papeles').add({nombre:v,orden:Date.now()})});
-  alta('formFl',function(){var v=$('flEmpresa').value.trim(),pp=parseFloat($('flPrecio').value);if(!v||!(pp>=0))return;return db.collection('fletes').add({empresa:v,precio:r2(pp),nota:$('flNota').value.trim(),fecha:hoyISO()})});
-  alta('formFe',function(){
-    var v=$('feTitulo').value.trim(),f=$('feFecha').value,t=$('feTipo').value,fin=$('feFin').value,doc={titulo:v,fecha:f,tipo:t};if(!v||!f)return;
-    if(t==='meta'){var pp=parseFloat($('fePct').value);if(!(pp>0))return;doc.pct=Math.min(100,pp)}else if(fin&&fin>f)doc.fin=fin;
-    $('feFin').value='';return db.collection('fechas').add(doc);
-  });
 
-  renderHero();pinta(p0||'pastel');soy(yo);renderCal();renderMuebles();
+  renderHero();pinta(p0||'pastel');soy(yo);renderMuebles();
   var apDocs=[];
   (window.claude&&window.claude.use?window.claude.use('db'):Promise.resolve(null)).then(function(x){
     db=x;
@@ -1718,14 +1391,11 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     db.collection('compras').onSnapshot(function(s){compras=rows(s).sort(byOrden);renderCompras();renderMetaCalc()},sin);
     db.doc('meta/precios').onSnapshot(function(s){precios=(s.exists&&s.data().p)||{};renderInv(invDocs)},sin);
     db.doc('meta/vida').onSnapshot(function(s){if(s.exists){vida=Object.assign({},s.data());renderVida()}},sin);
-    db.doc('meta/fondo').onSnapshot(function(s){fondoDoc=s.exists?s.data():null;renderFondo()},sin);
     db.collection('resumenes').onSnapshot(function(s){renderResumen(rows(s).sort(function(a,b){return String(b.id).localeCompare(String(a.id))}))},sin);
     db.collection('acuerdos').onSnapshot(function(s){renderAcuerdos(rows(s).sort(byOrden))},sin);
     db.collection('platicar').onSnapshot(function(s){renderPlaticar(rows(s).sort(byOrden))},sin);
     db.collection('mercado').onSnapshot(function(s){renderMercado(rows(s))},sin);
     db.collection('tareas').onSnapshot(function(s){renderTareas(rows(s).sort(byOrden))},sin);
-    db.collection('papeles').onSnapshot(function(s){renderPapeles(rows(s).sort(byOrden))},sin);
-    db.collection('fletes').onSnapshot(function(s){renderFletes(rows(s))},sin);
     window.claude.use('assets').then(function(a){assets=a});
     window.claude.use('sample').then(function(f){sampleFn=f;if(!f){clListo=true;renderCl();renderMuebles();renderMuro();renderCrea();return}f.limits().then(function(c){mbMax=c&&c.images?Math.min(c.images.maxCount,12):0},function(){mbMax=0}).then(function(){clListo=true;renderCl();renderMuebles();renderMuro();renderCrea()})});
     db.collection('pedidos').onSnapshot(function(s){pedDocs={};rows(s).forEach(function(r){pedDocs[r.id]=r});renderMuebles()},sin);
@@ -1734,12 +1404,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     db.collection('combina').onSnapshot(function(s){mbCombi={};rows(s).forEach(function(r){mbCombi[r.id]=r});renderMuebles()},sin);
     db.doc('meta/estilo').onSnapshot(function(s){if(s.exists)renderEstilo(s.data())},sin);
     db.collection('inspo').onSnapshot(function(s){inspoDocs=rows(s).sort(function(a,b){return (b.ts||0)-(a.ts||0)});renderMuro()},sin);
-    db.collection('deseos').onSnapshot(function(s){renderDeseos(rows(s).sort(byFechaDesc))},sin);
-    db.collection('ofertas').onSnapshot(function(s){renderOfertas(rows(s).sort(byFechaDesc))},sin);
     db.collection('depas').onSnapshot(function(s){renderDepas(rows(s))},sin);
     db.collection('inventario').onSnapshot(function(s){renderInv(rows(s).sort(byOrden))},sin);
-    db.collection('fechas').onSnapshot(function(s){feDocs=rows(s).sort(function(a,b){return String(a.fecha).localeCompare(String(b.fecha))});renderFechas()},sin);
-    db.collection('checklist').onSnapshot(function(s){renderCheck(rows(s).sort(byOrden))},sin);
   });
   renderAportes([]);
 })();
