@@ -50,6 +50,12 @@ header{display:flex;flex-direction:column;gap:4px;text-align:center;align-items:
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 .stack{display:flex;height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
 .stack i{display:block;height:100%} .stack .eu{background:var(--eu-ink);opacity:.6} .stack .lu{background:var(--lu-ink);opacity:.6} .stack .ok{background:var(--ok-ink);opacity:.6}
+.room-bar{display:flex;height:20px;border-radius:999px;background:var(--soft);overflow:hidden}
+.room-bar i{display:block;height:100%;min-width:0;transition:width .6s ease}
+@media (prefers-reduced-motion:reduce){.room-bar i{transition:none}}
+.room-legend{display:flex;flex-wrap:wrap;gap:6px}
+.room-legend span{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-weight:600;color:var(--muted)}
+.room-legend span i{width:8px;height:8px;border-radius:50%;flex:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.82rem;font-weight:700;background:var(--lav);color:var(--lav-ink)}
 .chip.eu{background:var(--eu);color:var(--eu-ink)} .chip.lu{background:var(--lu);color:var(--lu-ink)} .chip.ok{background:var(--ok);color:var(--ok-ink)} .chip.warn{background:var(--warn);color:var(--warn-ink)} .chip.plain{background:var(--soft);color:var(--muted)}
@@ -258,10 +264,10 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     <div class="card">
       <h2>Agregar algo a la lista</h2>
       <form class="row" id="formInv">
-        <label>Qué<input type="text" id="inInv" maxlength="80" required placeholder="Espejo de cuerpo completo"></label>
+        <label style="flex-basis:100%">Link del producto<input type="url" id="inUrl" placeholder="https://www.liverpool.com.mx/..."></label>
+        <label>Qué es<input type="text" id="inInv" maxlength="80" required placeholder="Silla Boerum de madera"></label>
         <label>Cuarto<select id="inCuarto"></select></label>
-        <label>Precio aprox.<input type="number" id="inPrecio" min="0" step="1" inputmode="decimal" placeholder="2500"></label>
-        <label style="flex-basis:100%">Link del producto (opcional)<input type="url" id="inUrl" placeholder="https://www.liverpool.com.mx/..."></label>
+        <label>Precio aprox.<input type="number" id="inPrecio" min="0" step="1" inputmode="decimal" placeholder="7199"></label>
         <button type="submit">Agregar</button>
       </form>
     </div>
@@ -646,6 +652,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
 
   // inventario por cuarto
   var CUARTOS=['Recámara principal','Segunda recámara','Sala','Comedor','Cocina','Lavado','Baños','Terraza o jardín','General'];
+  var CUARTO_HUES=[330,210,45,15,160,190,270,90,0];
+  function cuartoColor(c){var idx=CUARTOS.indexOf(c);var h=idx>=0?CUARTO_HUES[idx]:0;var l=document.documentElement.dataset.pal==='noche'?70:50;return 'hsl('+h+',55%,'+l+'%)'}
   CUARTOS.forEach(function(c){var o=document.createElement('option');o.textContent=c;$('inCuarto').appendChild(o)});
   var QUIEN=[['eugenia','Eugenia','eu'],['luis','Luis','lu'],['comprado','Comprado','ok']];
   var PAGO=[['eugenia','Eugenia','eu'],['luis','Luis','lu'],['ambos','Entre los dos','ok']];
@@ -677,8 +685,8 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       var k=cuenta(g[c]),t=g[c].length,fc=g[c].reduce(function(a,i){return a+(i.quien?0:precioDe(i))},0);
       var dt=document.createElement('details');dt.open=!!abiertos[c];
       dt.addEventListener('toggle',function(){abiertos[c]=dt.open});
-      dt.innerHTML='<summary><div class="sumtop"><h3>'+esc(c)+'</h3><span>'+(t-k.falta)+' de '+t+'</span></div>'+stack(k,t)+
-        '<span class="small muted">Eugenia '+pc(k.eugenia,t)+'% · Luis '+pc(k.luis,t)+'% · comprado '+pc(k.comprado,t)+'% · falta '+pc(k.falta,t)+'%'+(fc?' · por comprar ≈ '+esc(fmt.format(fc)):'')+'</span></summary>';
+      dt.innerHTML='<summary><div class="sumtop"><h3>'+esc(c)+'</h3>'+(fc?'<span class="num" style="color:'+cuartoColor(c)+';font-weight:700;font-size:.95rem">'+esc(fmt.format(fc))+'</span>':'')+'<span>'+(t-k.falta)+' de '+t+'</span></div>'+stack(k,t)+
+        '<span class="small muted">Eugenia '+pc(k.eugenia,t)+'% · Luis '+pc(k.luis,t)+'% · comprado '+pc(k.comprado,t)+'% · falta '+pc(k.falta,t)+'%</span></summary>';
       var ul=document.createElement('ul');ul.className='rows';
       g[c].forEach(function(i){
         var li=document.createElement('li');if(i.quien)li.className='res';
@@ -1228,13 +1236,30 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
     });
     var esperado=plan.meta,df=real-esperado;
     var estado=Math.abs(df)<1?'ok':(df>0?'warn':'ok');
+    // desglose por cuarto
+    var rt={},rtTotal=0;
+    invDocs.forEach(function(i){
+      if(i.quien==='comprado')return;
+      var c=i.cuarto||'General',p=precioDe(i);
+      rt[c]=(rt[c]||0)+p;rtTotal+=p;
+    });
+    var base=Math.max(rtTotal,esperado||1);
+    var barHtml='',legHtml='';
+    CUARTOS.forEach(function(c){
+      if(!rt[c])return;
+      var w=Math.max(rt[c]/base*100,2);
+      barHtml+='<i style="width:'+w+'%;background:'+cuartoColor(c)+';opacity:.7" title="'+esc(c)+': '+esc(fmt.format(rt[c]))+'"></i>';
+      legHtml+='<span><i style="background:'+cuartoColor(c)+'"></i>'+esc(c)+' '+esc(fmt.format(rt[c]))+' · '+pc(rt[c],base)+'%</span>';
+    });
+
     $('metaCalc').innerHTML='<div class="figs">'+
-      '<div class="fig"><b class="num" style="color:var(--lav-ink)">'+esc(fmt.format(esperado))+'</b><span>Esperado (referencia)</span></div>'+
-      '<div class="fig"><b class="num" style="color:var(--'+(df>0?'warn':'ok')+'-ink)">'+esc(fmt.format(real))+'</b><span>Real (suma de la lista)</span></div>'+
+      '<div class="fig"><b class="num" style="color:var(--lav-ink)">'+esc(fmt.format(esperado))+'</b><span>Presupuesto global</span></div>'+
+      '<div class="fig"><b class="num" style="color:var(--'+(df>0?'warn':'ok')+'-ink)">'+esc(fmt.format(real))+'</b><span>Suma de la lista</span></div>'+
       '<div class="fig"><b class="num">'+esc(fmt.format(comprado))+'</b><span>Ya comprado</span></div></div>'+
       '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pc(real,esperado)+'"><i style="width:'+Math.min(100,real/esperado*100)+'%;background:var(--'+(df>0?'warn':'ok')+'-ink)"></i></div>'+
-      '<p class="small">'+(Math.abs(df)<1?'La lista coincide con el esperado.':(df>0?'La lista es '+esc(fmt.format(df))+' más de lo esperado.':'La lista es '+esc(fmt.format(Math.abs(df)))+' menos de lo esperado.'))+'</p>'+
-      (sin?'<p class="small muted">'+sin+(sin===1?' producto no tiene':' productos no tienen')+' precio. Agréguenlo para tener un total más preciso.</p>':'');
+      '<p class="small">'+(Math.abs(df)<1?'La lista coincide con el presupuesto.':(df>0?'La lista es '+esc(fmt.format(df))+' más del presupuesto.':'Quedan '+esc(fmt.format(Math.abs(df)))+' disponibles del presupuesto.'))+'</p>'+
+      (sin?'<p class="small muted">'+sin+(sin===1?' producto no tiene':' productos no tienen')+' precio.</p>':'')+
+      (barHtml?'<h3 style="margin-top:16px">Por cuarto</h3><div class="room-bar" role="img" aria-label="Desglose por cuarto">'+barHtml+'</div><div class="room-legend">'+legHtml+'</div>':'');
   }
 
   function gastoComp(){return (+vida.renta||0)+(+vida.servicios||0)+(+vida.super||0)+(+vida.salidas||0)+(+vida.otros||0)}
