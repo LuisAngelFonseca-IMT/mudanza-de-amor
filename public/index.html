@@ -261,21 +261,9 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
 
   <div class="tab" id="t-cuartos" hidden>
     <div class="card">
-      <div class="head"><h2>Costos de entrada</h2><span class="small muted">Renta, depósito y póliza jurídica</span></div>
-      <form class="row" id="formEntrada">
-        <label>Renta mensual<input type="number" id="enRenta" min="0" step="100" inputmode="decimal" placeholder="20000"></label>
-        <label>Depósito<input type="number" id="enDeposito" min="0" step="100" inputmode="decimal" placeholder="20000"></label>
-        <label>Póliza jurídica %<input type="number" id="enPoliza" min="0" max="100" step="1" inputmode="decimal" placeholder="35"></label>
-        <button type="submit">Guardar</button>
-      </form>
-      <div id="entradaRes" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-    <div class="card">
       <div class="head"><h2>Presupuesto</h2><span class="small muted">Entrada + lista de compras vs. presupuesto global</span></div>
       <div id="metaCalc" style="display:flex;flex-direction:column;gap:12px"><p class="empty">Agreguen productos con precio para ver cuánto van a necesitar.</p></div>
     </div>
-    <div class="card" id="invRes"><p class="empty">Aquí aparece el resumen de quién aporta qué.</p></div>
-    <div class="card" id="gastos" hidden></div>
     <div id="inv" style="display:flex;flex-direction:column;gap:12px"></div>
     <div class="card">
       <h2>Agregar algo a la lista</h2>
@@ -286,6 +274,16 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
         <label>Precio aprox.<input type="number" id="inPrecio" min="0" step="1" inputmode="decimal" placeholder="7199"></label>
         <button type="submit">Agregar</button>
       </form>
+    </div>
+    <div class="card">
+      <div class="head"><h2>Costos de entrada</h2><span class="small muted">Renta, depósito y póliza jurídica</span></div>
+      <form class="row" id="formEntrada">
+        <label>Renta mensual<input type="number" id="enRenta" min="0" step="100" inputmode="decimal" placeholder="20000"></label>
+        <label>Depósito<input type="number" id="enDeposito" min="0" step="100" inputmode="decimal" placeholder="20000"></label>
+        <label>Póliza jurídica %<input type="number" id="enPoliza" min="0" max="100" step="1" inputmode="decimal" placeholder="35"></label>
+        <button type="submit">Guardar</button>
+      </form>
+      <div id="entradaRes" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 
@@ -780,8 +778,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       dt.appendChild(ul);box.appendChild(dt);
     });
     if(act&&/^(costo|eu|lu|pr)-/.test(act)&&$(act))$(act).focus();
-    $('invRes').innerHTML='<h2>Quién aporta qué</h2>'+stack(n,T)+'<div class="chips"><span class="chip eu">Eugenia '+n.eugenia+' · '+pc(n.eugenia,T)+'%</span><span class="chip lu">Luis '+n.luis+' · '+pc(n.luis,T)+'%</span><span class="chip ok">Comprado '+n.comprado+' · '+pc(n.comprado,T)+'%</span><span class="chip plain">Falta '+n.falta+' · '+pc(n.falta,T)+'%</span></div>';
-    // "Quién ha pagado" removido
+    // "Quién aporta qué" y "Quién ha pagado" removidos
   }
 
 
