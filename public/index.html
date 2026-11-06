@@ -722,33 +722,27 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       var k=cuenta(g[c]),t=g[c].length,fc=g[c].reduce(function(a,i){return a+(i.quien?0:precioDe(i))},0);
       var dt=document.createElement('details');dt.open=!!abiertos[c];
       dt.addEventListener('toggle',function(){abiertos[c]=dt.open});
-      dt.innerHTML='<summary><div class="sumtop"><h3>'+esc(c)+'</h3>'+(fc?'<span class="num" style="color:'+cuartoColor(c)+';font-weight:700;font-size:.95rem">'+esc(fmt.format(fc))+'</span>':'')+'<span>'+(t-k.falta)+' de '+t+'</span></div>'+stack(k,t)+
-        '<span class="small muted">Eugenia '+pc(k.eugenia,t)+'% · Luis '+pc(k.luis,t)+'% · comprado '+pc(k.comprado,t)+'% · falta '+pc(k.falta,t)+'%</span></summary>';
+      dt.innerHTML='<summary><div class="sumtop"><h3>'+esc(c)+'</h3>'+(fc?'<span class="num" style="color:'+cuartoColor(c)+';font-weight:700;font-size:.95rem">'+esc(fmt.format(fc))+'</span>':'')+'<span>'+t+' artículo'+(t===1?'':'s')+'</span></div>'+
+        '<span class="small muted">'+pc(k.comprado,t)+'% comprado</span></summary>';
       var ul=document.createElement('ul');ul.className='rows';
       g[c].forEach(function(i){
         var li=document.createElement('li');if(i.quien)li.className='res';
         var iu=safeUrl(i.url);
+        var precio=precioDe(i);
         var h=(iu?'<a href="'+esc(iu)+'" target="_blank" rel="noopener" class="thumb" data-preview="'+esc(iu)+'"></a>':'')+
-          '<span class="nm">'+esc(i.nombre)+(iu?' <a href="'+esc(iu)+'" target="_blank" rel="noopener" class="small" style="font-weight:400">ver</a>':'')+'</span>'+(i.quien?'':'<input type="number" class="pr" id="pr-'+esc(i.id)+'" min="0" step="50" inputmode="decimal" placeholder="$ aprox." aria-label="Precio aproximado de '+esc(i.nombre)+'" value="'+(precioDe(i)||'')+'">')+'<span class="pick">';
-        QUIEN.forEach(function(q){h+='<button type="button" class="'+q[2]+'" data-q="'+q[0]+'" aria-pressed="'+(i.quien===q[0])+'">'+q[1]+'</button>'});
-        h+='<button type="button" class="x" data-del="1" aria-label="Quitar '+esc(i.nombre)+' de la lista">✕</button></span>';
+          '<span class="nm">'+esc(i.nombre)+(iu?' <a href="'+esc(iu)+'" target="_blank" rel="noopener" class="small" style="font-weight:400">ver</a>':'')+'</span>'+
+          (i.quien==='comprado'?'<span class="amt num">'+esc(fmt.format(+i.costo||precio))+'</span>':
+           (precio?'<span class="amt num" style="color:var(--muted)">'+esc(fmt.format(precio))+'</span>':'')+'<input type="number" class="pr" id="pr-'+esc(i.id)+'" min="0" step="50" inputmode="decimal" placeholder="$ aprox." aria-label="Precio aproximado de '+esc(i.nombre)+'" value="'+(precio||'')+'">')+
+          '<span class="pick"><button type="button" class="ok" data-q="comprado" aria-pressed="'+(i.quien==='comprado')+'">Comprado</button>'+
+          '<button type="button" class="x" data-del="1" aria-label="Quitar '+esc(i.nombre)+' de la lista">✕</button></span>';
         if(i.quien==='comprado'){
-          h+='<div class="sub"><span class="small muted">Pagó</span><span class="pick">';
-          PAGO.forEach(function(q){h+='<button type="button" class="'+q[2]+'" data-p="'+q[0]+'" aria-pressed="'+(i.pago===q[0])+'">'+q[1]+'</button>'});
-          h+='</span><label>Costo<input type="number" id="costo-'+esc(i.id)+'" min="0" step="0.01" inputmode="decimal" value="'+(+i.costo?esc(i.costo):'')+'"></label>';
-          if(i.pago==='ambos'){
-            var pp=partes(i),tt=pp[0]+pp[1];
-            h+='<label>Eugenia puso<input type="number" id="eu-'+esc(i.id)+'" min="0" step="0.01" inputmode="decimal" value="'+(tt?esc(r2(pp[0])):'')+'"></label>'+
-              '<label>Luis puso<input type="number" id="lu-'+esc(i.id)+'" min="0" step="0.01" inputmode="decimal" value="'+(tt?esc(r2(pp[1])):'')+'"></label>'+
-              '<button type="button" class="mini" data-half="1">50/50</button>'+
-              '<span class="small muted" style="flex:1 1 100%">'+(tt?'Eugenia '+pc(pp[0],tt)+'% · Luis '+pc(pp[1],tt)+'%':'Pongan el costo y usen 50/50, o escriban cuánto puso cada quien.')+'</span>';
-          }
+          h+='<div class="sub"><label>Costo real<input type="number" id="costo-'+esc(i.id)+'" min="0" step="0.01" inputmode="decimal" value="'+(+i.costo?esc(i.costo):'')+'"></label>';
           h+='</div>';
         }
         li.innerHTML=h;
         var ref=function(){return db.doc('inventario/'+i.id)};
         li.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
-          var w=b.dataset.half?ref().update({pusoEu:r2((+i.costo||0)/2),pusoLu:r2((+i.costo||0)-r2((+i.costo||0)/2))}):b.dataset.del?ref().delete():b.dataset.p?ref().update({pago:i.pago===b.dataset.p?'':b.dataset.p}):ref().update({quien:i.quien===b.dataset.q?'':b.dataset.q});
+          var w=b.dataset.del?ref().delete():ref().update({quien:i.quien===b.dataset.q?'':b.dataset.q});
           w.catch(fallo);
         })});
         var pri=li.querySelector('.pr');
@@ -756,20 +750,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
         var inp=li.querySelector('[id^="costo-"]');
         if(inp)inp.addEventListener('change',function(){
           var v=r2(parseFloat(inp.value));if(v===(+i.costo||0))return;
-          var u={costo:v};
-          // si ya había un reparto escrito, se conserva la misma proporción con el costo nuevo
-          if(i.pago==='ambos'&&(i.pusoEu!=null||i.pusoLu!=null)){var q=partes(i),t=q[0]+q[1];u.pusoEu=t?r2(v*q[0]/t):r2(v/2);u.pusoLu=r2(v-u.pusoEu)}
-          ref().update(u).catch(fallo);
-        });
-        [['eu-','pusoEu','pusoLu'],['lu-','pusoLu','pusoEu']].forEach(function(k){
-          var e=li.querySelector('[id^="'+k[0]+'"]');if(!e)return;
-          e.addEventListener('change',function(){
-            var v=r2(parseFloat(e.value)),c=+i.costo||0,u={};u[k[1]]=v;
-            // con costo anotado, el otro pone el resto; sin costo, el costo es la suma
-            if(c>0){if(v>c){v=c;u[k[1]]=c}u[k[2]]=r2(c-v)}
-            else{var o=+i[k[2]]||0;u[k[2]]=o;u.costo=r2(v+o)}
-            ref().update(u).catch(fallo);
-          });
+          ref().update({costo:v}).catch(fallo);
         });
         var thumbEl=li.querySelector('[data-preview]');
         if(thumbEl)fetchPreview(thumbEl.dataset.preview,thumbEl);
