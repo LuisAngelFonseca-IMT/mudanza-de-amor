@@ -1421,7 +1421,7 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
   alta('formAc',function(){var v=$('acTexto').value.trim();if(!v)return;return db.collection('acuerdos').add({texto:v,grupo:$('acGrupo').value,orden:Date.now()})});
   alta('formPl',function(){var v=$('plTema').value.trim();if(!v)return;return db.collection('platicar').add({tema:v,resuelto:false,orden:Date.now()})});
   alta('formTar',function(){var v=$('tarNombre').value.trim();if(!v)return;return db.collection('tareas').add({nombre:v,quien:'',orden:Date.now()})});
-  alta('formEntrada',function(){var r=r2(parseFloat($('enRenta').value)),dep=r2(parseFloat($('enDeposito').value)),pol=parseInt($('enPoliza').value,10);return db.doc('meta/entrada').set({renta:r||0,deposito:dep||0,poliza:pol||0})});
+  $('formEntrada').addEventListener('submit',function(e){e.preventDefault();if(!db)return;var r=r2(parseFloat($('enRenta').value))||0,dep=r2(parseFloat($('enDeposito').value))||0,pol=parseInt($('enPoliza').value,10)||0;db.doc('meta/entrada').set({renta:r,deposito:dep,poliza:pol}).catch(fallo)});
   function renderEntrada(){
     var r=+entrada.renta||0,dep=+entrada.deposito||0,pol=+entrada.poliza||0,polMonto=Math.round(r*pol/100),tot=r+dep+polMonto;
     if(document.activeElement!==$('enRenta'))$('enRenta').value=r||'';
